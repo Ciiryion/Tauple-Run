@@ -13,11 +13,13 @@ public class TurnManager : MonoBehaviour
             {
                 Debug.Log("Virage");
                 other.GetComponent<PlayerController>().canTurn = true;
+                other.GetComponent<PlayerController>().isTurning = true;
             }
             else
             {
                 Debug.Log("Exit");
                 other.GetComponent<PlayerController>().returnToCenter(centerCheck);
+                other.GetComponent<PlayerController>().isTurning = false;
             }
         }
     }

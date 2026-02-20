@@ -27,12 +27,12 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
 
     [HideInInspector] public bool canTurn = false;
-    [HideInInspector] public bool isInTurn = false;
 
     private Vector3 lateralOffset;
     private float currentLocalX = 0f;
 
     private Coroutine changeLaneCo;
+    [HideInInspector] public bool isTurning = false;
 
     void Start()
     {
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("LaneChange");
+            if (isTurning) return;
             if (val > 0 && targetLane < 2)
             {
                 targetLane++;
@@ -124,6 +124,10 @@ public class PlayerController : MonoBehaviour
     {
         transform.position = centerCheck.position;
         targetLane = 1;
-
+        lateralOffset = Vector3.zero;
+        if (changeLaneCo != null)
+        {
+            StopCoroutine(changeLaneCo);
+        }
     }
 }
