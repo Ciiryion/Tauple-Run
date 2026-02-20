@@ -156,7 +156,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""name"": ""1D Axis"",
                     ""id"": ""6432ffe8-6d24-4e3a-8d10-261ebc585aa3"",
                     ""path"": ""1DAxis"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ChangeLane"",

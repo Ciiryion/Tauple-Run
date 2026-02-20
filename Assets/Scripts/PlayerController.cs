@@ -27,10 +27,12 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
 
     [HideInInspector] public bool canTurn = false;
+    [HideInInspector] public bool isInTurn = false;
 
-    private Coroutine laneChangeCoroutine;
     private Vector3 lateralOffset;
     private float currentLocalX = 0f;
+
+    private Coroutine changeLaneCo;
 
     void Start()
     {
@@ -67,12 +69,17 @@ public class PlayerController : MonoBehaviour
     {
         float val = value.Get<float>();
 
+        if (Mathf.Approximately(val, 0)) return; //La fonction n'est pas utilisé quand on relâche la touche
+
         if (canTurn)
         {
             if (val != 0)
             {
                 float angle = val > 0 ? 90f : -90f;
-                transform.Rotate(0, angle, 0);
+                Quaternion rotationToAdd = Quaternion.Euler(0, angle, 0);
+                Quaternion newRotation = rb.rotation * rotationToAdd;
+                rb.rotation = newRotation;
+                transform.rotation = newRotation;
                 canTurn = false;
                 currentLocalX = 0f;
                 lateralOffset = Vector3.zero;
@@ -80,17 +87,18 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            Debug.Log("LaneChange");
             if (val > 0 && targetLane < 2)
             {
                 targetLane++;
-                if (laneChangeCoroutine != null) StopCoroutine(laneChangeCoroutine);
-                laneChangeCoroutine = StartCoroutine(ChangeLaneRoutine());
+                if (changeLaneCo != null) StopCoroutine(changeLaneCo);
+                changeLaneCo = StartCoroutine(ChangeLaneRoutine());
             }
             else if (val < 0 && targetLane > 0)
             {
                 targetLane--;
-                if (laneChangeCoroutine != null) StopCoroutine(laneChangeCoroutine);
-                laneChangeCoroutine = StartCoroutine(ChangeLaneRoutine());
+                if (changeLaneCo != null) StopCoroutine(changeLaneCo);
+                changeLaneCo = StartCoroutine(ChangeLaneRoutine());
             }
         }
     }
@@ -110,5 +118,12 @@ public class PlayerController : MonoBehaviour
 
         currentLocalX = targetX;
         lateralOffset = Vector3.zero;
+    }
+
+    public void returnToCenter(Transform centerCheck)
+    {
+        transform.position = centerCheck.position;
+        targetLane = 1;
+
     }
 }
