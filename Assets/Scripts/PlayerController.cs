@@ -17,26 +17,30 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
 
     [Header("Glissade")]
-    [SerializeField] private float slideDuration = 1f;
-    [SerializeField] private float slideHeight = 0.5f;
+    [SerializeField] private AnimationClip slideAnimationClip;
+
+    private Animator playerAnimator;
 
     private Rigidbody rb;
     private Vector3 direction;
-    [SerializeField] private int targetLane = 1; // 0:G, 1:M, 2:D
+    private int targetLane = 1; // 0:G, 1:M, 2:D
     private bool isSliding = false;
     private bool isGrounded;
 
     [HideInInspector] public bool canTurn = false;
+    [HideInInspector] public bool isTurning = false;
 
     private Vector3 lateralOffset;
     private float currentLocalX = 0f;
 
     private Coroutine changeLaneCo;
-    [HideInInspector] public bool isTurning = false;
+
+    private const string ISSLIDING = "isSliding";
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        playerAnimator = GetComponent<Animator>();
 
         // Initialisation correcte selon la ligne de départ
         currentLocalX = (targetLane - 1) * laneDistance;
@@ -49,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        playerAnimator.SetBool(ISSLIDING, false);
         Vector3 forwardMove = transform.forward * forwardSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + forwardMove + lateralOffset);
         lateralOffset = Vector3.zero;
@@ -129,5 +134,32 @@ public class PlayerController : MonoBehaviour
         {
             StopCoroutine(changeLaneCo);
         }
+    }
+
+    void OnSlide()
+    {
+        if(!isSliding && isGrounded)
+        {
+            //Debug.Log("Slide");
+            playerAnimator.SetBool(ISSLIDING, true);
+            StartCoroutine(Slide());
+        }
+    }
+
+    private IEnumerator Slide()
+    {
+        Debug.Log("Start Slide");
+        isSliding = true;
+
+        GetComponent<CapsuleCollider>().height = 0.5f;
+        GetComponent<CapsuleCollider>().center = new Vector3(0, -0.5f, 0);
+
+        yield return new WaitForSeconds(slideAnimationClip.length);
+
+        GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
+        GetComponent<CapsuleCollider>().height = 2f;
+
+        isSliding = false;
+        Debug.Log("End Slide");
     }
 }
