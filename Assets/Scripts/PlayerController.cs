@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private UnityEvent<Vector3> turnEvent;
 
+    [Header("Score et Game Over")]
+    [SerializeField] private ScoreManager scoreManager;
+
     private Animator playerAnimator;
 
     private Rigidbody rb;
@@ -34,6 +37,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool canTurn = false;
     [HideInInspector] public bool isTurning = false;
+    [HideInInspector] public bool isDead = false;
 
     private Vector3 lateralOffset;
     private float currentLocalX = 0f;
@@ -47,7 +51,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerAnimator = GetComponent<Animator>();
 
-        // Initialisation correcte selon la ligne de d�part
+        // Initialisation correcte selon la ligne de départ
         currentLocalX = (targetLane - 1) * laneDistance;
     }
 
@@ -58,14 +62,30 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDead) return; // On arrête d'avancer si on est mort
+
         playerAnimator.SetBool(ISSLIDING, false);
         Vector3 forwardMove = transform.forward * forwardSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + forwardMove + lateralOffset);
         lateralOffset = Vector3.zero;
     }
 
+    public void Die()
+    {
+        Debug.Log("Le joueur a perdu");
+        isDead = true;
+
+        // On arrête le score
+        if (scoreManager != null)
+        {
+            scoreManager.StopScore();
+        }
+    }
+
     void OnJump()
     {
+        if (isDead) return; // Bloque l'input si mort
+
         if (isGrounded)
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.Impulse);
     }
@@ -79,7 +99,7 @@ public class PlayerController : MonoBehaviour
     {
         float val = value.Get<float>();
 
-        if (Mathf.Approximately(val, 0)) return; //La fonction n'est pas utilis� quand on rel�che la touche
+        if (Mathf.Approximately(val, 0)) return; //La fonction n'est pas utilisé quand on relâche la touche
 
 
         if (canTurn)
@@ -122,7 +142,7 @@ public class PlayerController : MonoBehaviour
     {
         float targetX = (targetLane - 1) * laneDistance;
 
-        // Boucle tant que le mouvement n'est pas termin�
+        // Boucle tant que le mouvement n'est pas terminé
         while (Mathf.Abs(targetX - currentLocalX) > 0.001f)
         {
             float newX = Mathf.MoveTowards(currentLocalX, targetX, laneChangeSpeed * Time.fixedDeltaTime);
