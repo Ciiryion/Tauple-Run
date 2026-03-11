@@ -54,14 +54,16 @@ public class InfiniteTerrain : MonoBehaviour
 
     private void DeletePreviousTile()
     {
-        while (activeTiles.Count != 0)
+        if(activeTiles.Count == 0) return;
+        while (activeTiles.Count != 1)
         {
             GameObject tile = activeTiles[0];
             activeTiles.RemoveAt(0);
             Destroy(tile);
         }
         
-        while (activeObstacles.Count != 0)
+        if(activeObstacles.Count == 0) return;
+        while (activeObstacles.Count != 1)
         {
             GameObject obstacle = activeObstacles[0];
             activeObstacles.RemoveAt(0);
@@ -102,6 +104,7 @@ public class InfiniteTerrain : MonoBehaviour
     private void SpawnObstacle()
     {
         if (Random.value > 0.2f) return; // 20% chance to spawn an obstacle
+        if (obstacles.Count == 0) return; // don't generate if there are no obstacle
 
         GameObject obstaclePrefab = SelectRandomGameObjectFromList(obstacles);
         Quaternion newObjectRotation = obstaclePrefab.gameObject.transform.rotation * Quaternion.LookRotation(currentTileDirection, Vector3.up);
