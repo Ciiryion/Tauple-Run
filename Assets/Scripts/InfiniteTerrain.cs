@@ -41,11 +41,11 @@ public class InfiniteTerrain : MonoBehaviour
     }
 
     #region Tile management
-    private void SpawnTile(Tile tile) // Plus besoin du paramètre bool spawnObstacles
+    private void SpawnTile(Tile tile)
     {
         Quaternion newTileRotation = tile.gameObject.transform.rotation * Quaternion.LookRotation(currentTileDirection, Vector3.up);
 
-        previousTile = Instantiate(tile.gameObject, currentTileLocation, newTileRotation);
+        previousTile = Instantiate(tile.gameObject, currentTileLocation.Snap(), newTileRotation);
         activeTiles.Add(previousTile);
 
         if (tile.type == TileType.STRAIGHT || tile.type == TileType.OBSTACLE)
