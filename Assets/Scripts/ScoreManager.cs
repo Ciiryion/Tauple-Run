@@ -7,18 +7,19 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
 
     [Header("Score Settings")]
-    [Tooltip("Multiplicateur pour définir à quelle vitesse le score augmente par seconde")]
-    public float scoreMultiplier = 10f; 
+    [Tooltip("Multiplicateur de base pour le score par seconde")]
+    public float baseScoreMultiplier = 10f; 
 
     private float currentScore = 0f;
     private bool isPlayerDead = false;
 
     private void Update()
     {
-        // On n'augmente le score que si le joueur est en vie
-        if (!isPlayerDead)
+        if (!isPlayerDead && GameManager.Instance != null)
         {
-            currentScore += Time.deltaTime * scoreMultiplier;
+            // Le score augmente de plus en plus vite en fonction de la vitesse du jeu
+            float speedFactor = GameManager.Instance.CurrentSpeedMultiplier;
+            currentScore += Time.deltaTime * baseScoreMultiplier * speedFactor;
             UpdateScoreUI();
         }
     }
@@ -27,7 +28,6 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            // Arrondir le score
             scoreText.text = "Score: " + Mathf.FloorToInt(currentScore).ToString();
         }
         else
@@ -39,5 +39,12 @@ public class ScoreManager : MonoBehaviour
     public void StopScore()
     {
         isPlayerDead = true;
+    }
+
+    // Ajouté pour préparer les resets de l'IA
+    public void ResetScore()
+    {
+        currentScore = 0f;
+        isPlayerDead = false;
     }
 }

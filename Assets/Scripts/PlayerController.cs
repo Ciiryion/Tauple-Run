@@ -60,12 +60,18 @@ public class PlayerController : MonoBehaviour
         CheckGround();
     }
 
-    private void FixedUpdate()
+private void FixedUpdate()
     {
-        if (isDead) return; // On arrête d'avancer si on est mort
+        if (isDead) return; 
 
         playerAnimator.SetBool(ISSLIDING, false);
-        Vector3 forwardMove = transform.forward * forwardSpeed * Time.fixedDeltaTime;
+        
+        // On récupère le multiplicateur de vitesse depuis le GameManager
+        float currentSpeedMod = GameManager.Instance != null ? GameManager.Instance.CurrentSpeedMultiplier : 1f;
+
+        // On applique l'accélération
+        Vector3 forwardMove = transform.forward * forwardSpeed * currentSpeedMod * Time.fixedDeltaTime;
+        
         rb.MovePosition(rb.position + forwardMove + lateralOffset);
         lateralOffset = Vector3.zero;
     }
@@ -75,7 +81,11 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Le joueur a perdu");
         isDead = true;
 
-        // On arrête le score
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+
         if (scoreManager != null)
         {
             scoreManager.StopScore();
