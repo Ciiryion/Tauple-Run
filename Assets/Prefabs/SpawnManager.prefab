@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7066544372412263511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3708480258196647963}
+  - component: {fileID: 1684719282536221805}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3708480258196647963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7066544372412263511}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1684719282536221805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7066544372412263511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37b42e0f33ebfa144826559fdb7eb0fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfiniteTerrain
+  tileStartCount: 2
+  minimumStraightTiles: 3
+  maximumStraightTiles: 15
+  obstacleProbability: 0.2
+  startingTile: {fileID: 6046035773785605899, guid: 95d363569167cc2418cc58ce2076bf4d, type: 3}
+  turnTiles:
+  - {fileID: 7634968668266539231, guid: 02f95af63a056c145a847c3a1cc424f0, type: 3}
+  - {fileID: 7634968668266539231, guid: 8fd65c8a3be8b6842ae999556ea2e7be, type: 3}
+  obstacleTiles:
+  - {fileID: 6046035773785605899, guid: b6b42f1a4a7352745a0bab0a0debc910, type: 3}
+  - {fileID: 6046035773785605899, guid: 654f8b5e6d39bca4ca17a99d0980da62, type: 3}
+  - {fileID: 6046035773785605899, guid: dec2d021c78670a4a8310ebc5c59b5a6, type: 3}
+  - {fileID: 6046035773785605899, guid: 5a014899811eb1f418480c979804f46d, type: 3}
+  - {fileID: 6046035773785605899, guid: 7ab2668328e00b045a96935a48cf02c8, type: 3}
