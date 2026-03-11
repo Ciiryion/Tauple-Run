@@ -196,8 +196,8 @@ private void FixedUpdate()
 
         yield return new WaitForSeconds(slideAnimationClip.length);
 
-        GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
         GetComponent<CapsuleCollider>().height = 2f;
+        GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
 
         isSliding = false;
         Debug.Log("End Slide");
