@@ -18,7 +18,7 @@ public class TurnManager : MonoBehaviour
             else
             {
                 Debug.Log("Exit");
-                other.GetComponent<PlayerController>().returnToCenter(centerCheck);
+                other.GetComponent<PlayerController>().ReturnToCenter(centerCheck);
                 other.GetComponent<PlayerController>().isTurning = false;
             }
         }

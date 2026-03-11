@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         CheckGround();
     }
 
-private void FixedUpdate()
+    private void FixedUpdate()
     {
         if (isDead) return; 
 
@@ -92,54 +92,33 @@ private void FixedUpdate()
         }
     }
 
-    void OnJump()
-    {
-        if (isDead) return; // Bloque l'input si mort
-
-        if (isGrounded)
-            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.Impulse);
-    }
-
     void CheckGround()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
     }
 
-    void OnChangeLane(InputValue value)
+    #region ACTIONS PUBLIQUES
+
+    public void Jump()
     {
-        float val = value.Get<float>();
+        if (isDead) return; 
 
-        if (Mathf.Approximately(val, 0)) return; //La fonction n'est pas utilisé quand on relâche la touche
+        if (isGrounded)
+            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.Impulse);
+    }
 
+    public void MoveLeft()
+    {
+        if (isDead) return;
 
         if (canTurn)
-        {   
-            // Gère le virage
-            if (val != 0)
-            {
-                float angle = val > 0 ? 90f : -90f;
-                Quaternion rotationToAdd = Quaternion.Euler(0, angle, 0);
-                Quaternion newRotation = rb.rotation * rotationToAdd;
-                rb.rotation = newRotation;
-                transform.rotation = newRotation;
-                canTurn = false;
-                currentLocalX = 0f;
-                lateralOffset = Vector3.zero;
-
-                // Déclenche l'événement de virage
-                turnEvent?.Invoke(transform.forward);
-            }
+        {
+            ExecuteTurn(-90f);
         }
         else
         {
             if (isTurning) return;
-            if (val > 0 && targetLane < 2)
-            {
-                targetLane++;
-                if (changeLaneCo != null) StopCoroutine(changeLaneCo);
-                changeLaneCo = StartCoroutine(ChangeLaneRoutine());
-            }
-            else if (val < 0 && targetLane > 0)
+            if (targetLane > 0)
             {
                 targetLane--;
                 if (changeLaneCo != null) StopCoroutine(changeLaneCo);
@@ -148,11 +127,88 @@ private void FixedUpdate()
         }
     }
 
+    public void MoveRight()
+    {
+        if (isDead) return;
+
+        if (canTurn)
+        {
+            ExecuteTurn(90f);
+        }
+        else
+        {
+            if (isTurning) return;
+            if (targetLane < 2)
+            {
+                targetLane++;
+                if (changeLaneCo != null) StopCoroutine(changeLaneCo);
+                changeLaneCo = StartCoroutine(ChangeLaneRoutine());
+            }
+        }
+    }
+
+    public void SlideAction()
+    {
+        if (isDead) return;
+
+        if (!isSliding && isGrounded)
+        {
+            playerAnimator.SetBool(ISSLIDING, true);
+            StartCoroutine(SlideCoroutine()); // Coroutine renommée
+        }
+    }
+
+    private void ExecuteTurn(float angle)
+    {
+        Quaternion rotationToAdd = Quaternion.Euler(0, angle, 0);
+        Quaternion newRotation = rb.rotation * rotationToAdd;
+        rb.rotation = newRotation;
+        transform.rotation = newRotation;
+        canTurn = false;
+        currentLocalX = 0f;
+        lateralOffset = Vector3.zero;
+
+        turnEvent?.Invoke(transform.forward);
+    }
+
+    #endregion
+
+    #region INPUTS UNITY
+
+    void OnJump()
+    {
+        Jump();
+    }
+
+    void OnSlide()
+    {
+        SlideAction();
+    }
+
+    void OnChangeLane(InputValue value)
+    {
+        float val = value.Get<float>();
+
+        if (Mathf.Approximately(val, 0)) return; 
+
+        if (val > 0)
+        {
+            MoveRight();
+        }
+        else if (val < 0)
+        {
+            MoveLeft();
+        }
+    }
+
+    #endregion
+
+    #region COROUTINES + RESET
+
     private IEnumerator ChangeLaneRoutine()
     {
         float targetX = (targetLane - 1) * laneDistance;
 
-        // Boucle tant que le mouvement n'est pas terminé
         while (Mathf.Abs(targetX - currentLocalX) > 0.001f)
         {
             float newX = Mathf.MoveTowards(currentLocalX, targetX, laneChangeSpeed * Time.fixedDeltaTime);
@@ -165,28 +221,7 @@ private void FixedUpdate()
         lateralOffset = Vector3.zero;
     }
 
-    public void returnToCenter(Transform centerCheck)
-    {
-        transform.position = centerCheck.position;
-        targetLane = 1;
-        lateralOffset = Vector3.zero;
-        if (changeLaneCo != null)
-        {
-            StopCoroutine(changeLaneCo);
-        }
-    }
-
-    void OnSlide()
-    {
-        if(!isSliding && isGrounded)
-        {
-            //Debug.Log("Slide");
-            playerAnimator.SetBool(ISSLIDING, true);
-            StartCoroutine(Slide());
-        }
-    }
-
-    private IEnumerator Slide()
+    private IEnumerator SlideCoroutine()
     {
         Debug.Log("Start Slide");
         isSliding = true;
@@ -203,17 +238,27 @@ private void FixedUpdate()
         Debug.Log("End Slide");
     }
 
+    public void ReturnToCenter(Transform centerCheck)
+    {
+        transform.position = centerCheck.position;
+        targetLane = 1;
+        lateralOffset = Vector3.zero;
+        if (changeLaneCo != null)
+        {
+            StopCoroutine(changeLaneCo);
+        }
+    }
+
     public void ResetPlayer(Vector3 startPosition, Quaternion startRotation)
     {
         // 1. Réinitialisation des états
         isDead = false;
         canTurn = false;
         isTurning = false;
-        targetLane = 1; // On le remet sur la voie du milieu
+        targetLane = 1; 
         currentLocalX = 0f;
         lateralOffset = Vector3.zero;
 
-        // On arrête les coroutines en cours (comme le changement de voie)
         if (changeLaneCo != null) StopCoroutine(changeLaneCo);
         
         // 2. Réinitialisation de la physique et de l'animation
@@ -226,4 +271,6 @@ private void FixedUpdate()
 
         playerAnimator.SetBool(ISSLIDING, false);
     }
+
+    #endregion
 }
