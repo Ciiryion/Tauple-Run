@@ -462,6 +462,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5210629004692042757, guid: 42645019014c11b418fbb85b5585ffba, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 1779825999}
+    - target: {fileID: 5210629004692042757, guid: 42645019014c11b418fbb85b5585ffba, type: 3}
       propertyPath: turnEvent.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -614,6 +618,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1779825999 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8007152514074853806, guid: 5afe3b120cdf1c84ca4c084ff772480f, type: 3}
+  m_PrefabInstance: {fileID: 398071677699055168}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 413c74bbc2a9886479ed144e688655d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
 --- !u!114 &1791993065 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1684719282536221805, guid: b0d5603668e696842ba98a8f2b95773a, type: 3}
