@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -18,6 +19,10 @@ public class PlayerController : MonoBehaviour
 
     [Header("Glissade")]
     [SerializeField] private AnimationClip slideAnimationClip;
+
+    [Header("Virage")]
+    [SerializeField]
+    private UnityEvent<Vector3> turnEvent;
 
     private Animator playerAnimator;
 
@@ -42,7 +47,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerAnimator = GetComponent<Animator>();
 
-        // Initialisation correcte selon la ligne de départ
+        // Initialisation correcte selon la ligne de dï¿½part
         currentLocalX = (targetLane - 1) * laneDistance;
     }
 
@@ -74,10 +79,12 @@ public class PlayerController : MonoBehaviour
     {
         float val = value.Get<float>();
 
-        if (Mathf.Approximately(val, 0)) return; //La fonction n'est pas utilisé quand on relâche la touche
+        if (Mathf.Approximately(val, 0)) return; //La fonction n'est pas utilisï¿½ quand on relï¿½che la touche
+
 
         if (canTurn)
-        {
+        {   
+            // GÃ¨re le virage
             if (val != 0)
             {
                 float angle = val > 0 ? 90f : -90f;
@@ -88,6 +95,9 @@ public class PlayerController : MonoBehaviour
                 canTurn = false;
                 currentLocalX = 0f;
                 lateralOffset = Vector3.zero;
+
+                // DÃ©clenche l'Ã©vÃ©nement de virage
+                turnEvent?.Invoke(transform.forward);
             }
         }
         else
@@ -112,7 +122,7 @@ public class PlayerController : MonoBehaviour
     {
         float targetX = (targetLane - 1) * laneDistance;
 
-        // Boucle tant que le mouvement n'est pas terminé
+        // Boucle tant que le mouvement n'est pas terminï¿½
         while (Mathf.Abs(targetX - currentLocalX) > 0.001f)
         {
             float newX = Mathf.MoveTowards(currentLocalX, targetX, laneChangeSpeed * Time.fixedDeltaTime);
