@@ -567,12 +567,16 @@ MonoBehaviour:
   tileStartCount: 2
   minimumStraightTiles: 3
   maximumStraightTiles: 15
-  obstacleProbability: 0.35
+  obstacleProbability: 0.2
   startingTile: {fileID: 6046035773785605899, guid: 95d363569167cc2418cc58ce2076bf4d, type: 3}
   turnTiles:
   - {fileID: 7634968668266539231, guid: 02f95af63a056c145a847c3a1cc424f0, type: 3}
   - {fileID: 7634968668266539231, guid: 8fd65c8a3be8b6842ae999556ea2e7be, type: 3}
   obstacleTiles:
+  - {fileID: 6046035773785605899, guid: b6b42f1a4a7352745a0bab0a0debc910, type: 3}
+  - {fileID: 6046035773785605899, guid: 654f8b5e6d39bca4ca17a99d0980da62, type: 3}
+  - {fileID: 6046035773785605899, guid: dec2d021c78670a4a8310ebc5c59b5a6, type: 3}
+  - {fileID: 6046035773785605899, guid: 5a014899811eb1f418480c979804f46d, type: 3}
   - {fileID: 6046035773785605899, guid: 7ab2668328e00b045a96935a48cf02c8, type: 3}
 --- !u!4 &1791993066
 Transform:
