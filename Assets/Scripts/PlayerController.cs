@@ -202,4 +202,28 @@ private void FixedUpdate()
         isSliding = false;
         Debug.Log("End Slide");
     }
+
+    public void ResetPlayer(Vector3 startPosition, Quaternion startRotation)
+    {
+        // 1. Réinitialisation des états
+        isDead = false;
+        canTurn = false;
+        isTurning = false;
+        targetLane = 1; // On le remet sur la voie du milieu
+        currentLocalX = 0f;
+        lateralOffset = Vector3.zero;
+
+        // On arrête les coroutines en cours (comme le changement de voie)
+        if (changeLaneCo != null) StopCoroutine(changeLaneCo);
+        
+        // 2. Réinitialisation de la physique et de l'animation
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        
+        transform.SetPositionAndRotation(startPosition, startRotation);
+        rb.position = startPosition;
+        rb.rotation = startRotation;
+
+        playerAnimator.SetBool(ISSLIDING, false);
+    }
 }

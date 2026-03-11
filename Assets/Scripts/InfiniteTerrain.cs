@@ -111,4 +111,30 @@ public class InfiniteTerrain : MonoBehaviour
         return list[Random.Range(0, list.Count)];
     }
     #endregion
+
+    #region Reset for AI
+    public void ResetTerrain()
+    {
+        // 1. On détruit toutes les tuiles actuellement actives
+        // Destroying all active tiles
+        foreach (GameObject tile in activeTiles)
+        {
+            if (tile != null) Destroy(tile);
+        }
+        activeTiles.Clear();
+
+        // Reset position variables
+        currentTileLocation = Vector3.zero;
+        currentTileDirection = Vector3.forward;
+        previousTile = null;
+
+        // Generate new terrain with basic tiles
+        for (int i = 0; i < tileStartCount; i++)
+        {
+            SpawnTile(startingTile.GetComponent<Tile>());
+        }
+
+        SpawnTile(SelectRandomGameObjectFromList(turnTiles).GetComponent<Tile>());
+    }
+    #endregion
 }
