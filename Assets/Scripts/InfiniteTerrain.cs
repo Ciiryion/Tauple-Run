@@ -3,71 +3,64 @@ using UnityEngine;
 
 public class InfiniteTerrain : MonoBehaviour
 {
-    [Header("Terrain Generation parameters")]
+    [Header("Terrain Generation Parameters")]
     [SerializeField] private int tileStartCount = 10;
     [SerializeField] private int minimumStraightTiles = 3;
     [SerializeField] private int maximumStraightTiles = 15;
 
+    [Header("Obstacle Generation")]
+    [Tooltip("Probabilité d'apparition d'une tuile obstacle au lieu d'une tuile normale.")]
+    [Range(0f, 1f)] 
+    [SerializeField] private float obstacleProbability = 0.2f;
 
     [Header("Terrain prefabs")]
     [SerializeField] private GameObject startingTile;
     [SerializeField] private List<GameObject> turnTiles;
-    [SerializeField] private List<GameObject> obstacles;
-
+    [SerializeField] private List<GameObject> obstacleTiles;
     
     private Vector3 currentTileLocation = Vector3.zero;
     private Vector3 currentTileDirection = Vector3.forward;
     private GameObject previousTile;
 
+    // Plus besoin d'une liste séparée pour les obstacles, tout est une tuile !
     private List<GameObject> activeTiles = new List<GameObject>();
-    private List<GameObject> activeObstacles = new List<GameObject>();
-
 
     private void Start()
     {
         activeTiles = new List<GameObject>();
-        activeObstacles = new List<GameObject>();
 
         Random.InitState(System.DateTime.Now.Millisecond);
 
+        // On génère le début du chemin avec des tuiles normales uniquement
         for (int i = 0; i < tileStartCount; i++)
         {
-            SpawnTile(startingTile.GetComponent<Tile>(), false);
+            SpawnTile(startingTile.GetComponent<Tile>());
         }
 
         SpawnTile(SelectRandomGameObjectFromList(turnTiles).GetComponent<Tile>());
     }
 
     #region Tile management
-    private void SpawnTile(Tile tile, bool spawnObstacles = false)
+    private void SpawnTile(Tile tile) // Plus besoin du paramètre bool spawnObstacles
     {
         Quaternion newTileRotation = tile.gameObject.transform.rotation * Quaternion.LookRotation(currentTileDirection, Vector3.up);
 
         previousTile = Instantiate(tile.gameObject, currentTileLocation, newTileRotation);
         activeTiles.Add(previousTile);
 
-        if(spawnObstacles) SpawnObstacle();
-
-        if(tile.type == TileType.STRAIGHT)
+        if (tile.type == TileType.STRAIGHT || tile.type == TileType.OBSTACLE)
+        {
             currentTileLocation += Vector3.Scale(previousTile.GetComponent<Renderer>().bounds.size, currentTileDirection);
+        }
     }
 
     private void DeletePreviousTile()
     {
-        if(activeTiles.Count == 0) return;
-        while (activeTiles.Count != 1)
+        while (activeTiles.Count > 1)
         {
             GameObject tile = activeTiles[0];
             activeTiles.RemoveAt(0);
             Destroy(tile);
-        }
-        
-        if(activeObstacles.Count == 0) return;
-        while (activeObstacles.Count != 1)
-        {
-            GameObject obstacle = activeObstacles[0];
-            activeObstacles.RemoveAt(0);
-            Destroy(obstacle);
         }
     }
 
@@ -77,7 +70,7 @@ public class InfiniteTerrain : MonoBehaviour
         DeletePreviousTile();
 
         Vector3 tilePlacementScale;
-        if(previousTile.GetComponent<Tile>().type == TileType.SIDEWAYS)
+        if (previousTile.GetComponent<Tile>().type == TileType.SIDEWAYS) // Unused for now
         {
             tilePlacementScale = Vector3.Scale(previousTile.GetComponent<Renderer>().bounds.size / 2 +
                 (Vector3.one * startingTile.GetComponent<BoxCollider>().size.z / 2), currentTileDirection);
@@ -93,24 +86,21 @@ public class InfiniteTerrain : MonoBehaviour
         int currentPathLength = Random.Range(minimumStraightTiles, maximumStraightTiles);
         for (int i = 0; i < currentPathLength; i++)
         {
-            SpawnTile(startingTile.GetComponent<Tile>(), i != 0);
+            GameObject tileToSpawn = startingTile;
+
+            // Don't spawn an obstacle on first tile after turning
+            if (i != 0 && obstacleTiles != null && obstacleTiles.Count > 0)
+            {
+                if (Random.value <= obstacleProbability)
+                {
+                    tileToSpawn = SelectRandomGameObjectFromList(obstacleTiles);
+                }
+            }
+
+            SpawnTile(tileToSpawn.GetComponent<Tile>());
         }
 
         SpawnTile(SelectRandomGameObjectFromList(turnTiles).GetComponent<Tile>());
-    }
-    #endregion
-
-    #region Obstacle management
-    private void SpawnObstacle()
-    {
-        if (Random.value > 0.2f) return; // 20% chance to spawn an obstacle
-        if (obstacles.Count == 0) return; // don't generate if there are no obstacle
-
-        GameObject obstaclePrefab = SelectRandomGameObjectFromList(obstacles);
-        Quaternion newObjectRotation = obstaclePrefab.gameObject.transform.rotation * Quaternion.LookRotation(currentTileDirection, Vector3.up);
-
-        GameObject obstacle = Instantiate(obstaclePrefab, currentTileLocation, newObjectRotation);
-        activeObstacles.Add(obstacle);
     }
     #endregion
 

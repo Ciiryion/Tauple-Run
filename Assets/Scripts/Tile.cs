@@ -5,8 +5,11 @@ public enum TileType
     STRAIGHT,
     LEFT,
     RIGHT,
-    SIDEWAYS
+    SIDEWAYS,
+
+    OBSTACLE
 }
+
 public class Tile : MonoBehaviour
 {
     public TileType type;
