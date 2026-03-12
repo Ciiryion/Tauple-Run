@@ -163,8 +163,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6666667, y: 120, z: 0.1}
-  m_Center: {x: 0, y: 60, z: 1}
+  m_Size: {x: 0.6666667, y: 300, z: 1}
+  m_Center: {x: 0, y: 150, z: 1.45}
 --- !u!1 &6046035773785605899
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,7 +181,7 @@ GameObject:
   - component: {fileID: 5025051759851438601}
   m_Layer: 3
   m_Name: RightOnly
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

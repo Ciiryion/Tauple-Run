@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 427681481965557110}
   m_Layer: 3
   m_Name: Hole
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -418,5 +418,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 30, z: 0.1}
-  m_Center: {x: 0, y: 0, z: 1}
+  m_Size: {x: 1, y: 30, z: 0.35}
+  m_Center: {x: 0, y: 0, z: 1.1225}
