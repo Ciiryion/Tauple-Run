@@ -182,6 +182,14 @@ public class PlayerController : MonoBehaviour
         lateralOffset = Vector3.zero;
 
         turnEvent?.Invoke(transform.forward);
+
+        // Récompense pour avoir réussi un virage
+        RunnerAgent agent = GetComponent<RunnerAgent>();
+        if (agent != null)
+        {
+            // boost positif qui va forcer l'IA à chercher les virages
+            agent.AddReward(0.5f); // Valeur modifiable
+        }
     }
     #endregion
 
