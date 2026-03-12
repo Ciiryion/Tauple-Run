@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
     [Header("Score et Game Over")]
     [SerializeField] private ScoreManager scoreManager;
 
+    [Header("Limites de Terrain")]
+    [SerializeField] private float fallDeathYThreshold = -5f;
+
     private Animator playerAnimator;
 
     private Rigidbody rb;
@@ -57,7 +60,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (isDead) return;
+
         CheckGround();
+
+        // Anti-triche : si le joueur tombe sous la limite, on le tue
+        if (transform.position.y <= fallDeathYThreshold)
+        {
+            Debug.Log("L'IA a essayé de tricher en tombant !");
+            Die();
+        }
     }
 
     private void FixedUpdate()
@@ -78,6 +90,8 @@ public class PlayerController : MonoBehaviour
 
     public void Die()
     {
+        if (isDead) return; // Sécurité pour éviter d'appeler Die() plusieurs fois
+
         Debug.Log("Le joueur a perdu");
         isDead = true;
 
@@ -98,7 +112,6 @@ public class PlayerController : MonoBehaviour
     }
 
     #region ACTIONS PUBLIQUES
-
     public void Jump()
     {
         if (isDead) return; 
@@ -170,11 +183,9 @@ public class PlayerController : MonoBehaviour
 
         turnEvent?.Invoke(transform.forward);
     }
-
     #endregion
 
     #region INPUTS UNITY
-
     void OnJump()
     {
         Jump();
@@ -200,11 +211,9 @@ public class PlayerController : MonoBehaviour
             MoveLeft();
         }
     }
-
     #endregion
 
     #region COROUTINES + RESET
-
     private IEnumerator ChangeLaneRoutine()
     {
         float targetX = (targetLane - 1) * laneDistance;
@@ -223,7 +232,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator SlideCoroutine()
     {
-        Debug.Log("Start Slide");
+        // Debug.Log("Start Slide");
         isSliding = true;
 
         GetComponent<CapsuleCollider>().height = 0.5f;
@@ -235,7 +244,7 @@ public class PlayerController : MonoBehaviour
         GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
 
         isSliding = false;
-        Debug.Log("End Slide");
+        // Debug.Log("End Slide");
     }
 
     public void ReturnToCenter(Transform centerCheck)
@@ -271,6 +280,5 @@ public class PlayerController : MonoBehaviour
 
         playerAnimator.SetBool(ISSLIDING, false);
     }
-
     #endregion
 }

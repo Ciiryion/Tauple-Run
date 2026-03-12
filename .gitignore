@@ -1,4 +1,9 @@
 ml-env/
+results/
+/[Aa]ssets/ML-Agents
+ML-Agents.meta
+
+/.vscode
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #

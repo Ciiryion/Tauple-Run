@@ -50,10 +50,7 @@ public class GameManager : MonoBehaviour
     {
         isGameRunning = false;
 
-        Debug.Log("GameOver");
-        
-        // Temporaire : Pour tester toi-même sans l'IA, on relance le jeu après 2 secondes
-        Invoke("ResetGame", 2f); 
+        // Debug.Log("GameOver");
     }
 
     public void ResetGame()

@@ -834,6 +834,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1627523832}
     m_Modifications:
+    - target: {fileID: 1684719282536221805, guid: b0d5603668e696842ba98a8f2b95773a, type: 3}
+      propertyPath: tileStartCount
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3708480258196647963, guid: b0d5603668e696842ba98a8f2b95773a, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
